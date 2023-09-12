@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/FunWithStorage.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.7;\n\ncontract FunWithStorage {\n    uint256 favoriteNumber; // Stored at slot 0\n    bool someBool; // Stored at slot 1\n    uint256[] myArray; /* Array Length Stored at slot 2,\n    but the objects will be the keccak256(2), since 2 is the storage slot of the array */\n    mapping(uint256 => bool) myMap; /* An empty slot is held at slot 3\n    and the elements will be stored at keccak256(h(k) . p)\n\n    p: The storage slot (aka, 3)\n    k: The key in hex\n    h: Some function based on the type. For uint256, it just pads the hex\n    */\n    uint256 constant NOT_IN_STORAGE = 123;\n    uint256 immutable i_not_in_storage;\n\n    constructor() {\n        favoriteNumber = 25; // See stored spot above // SSTORE\n        someBool = true; // See stored spot above // SSTORE\n        myArray.push(222); // SSTORE\n        myMap[0] = true; // SSTORE\n        i_not_in_storage = 123;\n    }\n\n    function doStuff() public {\n        uint256 newVar = favoriteNumber + 1; // SLOAD\n        bool otherVar = someBool; // SLOAD\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
